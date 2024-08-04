@@ -13,6 +13,7 @@ dic = pd.read_excel(io = ruta_input + 'descdef.xlsx', sheet_name = 'CODMUER', he
 
 dic.rename(columns={'CODIGO': 'CAUSA'}, inplace=True)
 dic.drop_duplicates()
+dic.to_csv(ruta_output + 'df_dic.csv', index=False)
 
 df_grupo_tt = None
 df_causas_tt = None
@@ -98,4 +99,4 @@ if os.path.isfile(ruta_input + 'tfm_API_SP.POP.TOTL_DS2_es_csv_v2_2028466.csv'):
     df = pd.read_csv(ruta_input + 'tfm_API_SP.POP.TOTL_DS2_es_csv_v2_2028466.csv')
     df.drop_duplicates()
     df_poblacion = df.query('Country == "Argentina"')
-    df_poblacion.to_csv(ruta_output + 'tfm_poblacion.csv', index=False)
+    df_poblacion.to_csv(ruta_output + 'df_poblacion.csv', index=False)
