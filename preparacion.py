@@ -9,7 +9,7 @@ from utilidades.parametros import (ruta_input, ruta_output)
 
 
 ## levanto el diccionario con los cod de defuncion 
-dic = pd.read_excel(io = ruta_input + 'descdef.xlsx', sheet_name = 'CODMUER', header = 0, names=None, index_col=None,engine = 'openpyxl', dtype={'CO': str})
+dic = pd.read_excel(io = ruta_input + 'tfm_descdef.xlsx', sheet_name = 'CODMUER', header = 0, names=None, index_col=None,engine = 'openpyxl', dtype={'CO': str})
 
 dic.rename(columns={'CODIGO': 'CAUSA'}, inplace=True)
 dic.drop_duplicates()
@@ -18,7 +18,7 @@ dic.to_csv(ruta_output + 'df_dic.csv', index=False)
 df_grupo_tt = None
 df_causas_tt = None
 
-## procesamiento de archivos para extraer datos de grupo etareos y causas de defuncion
+## procesamiento de archivos para extraer datos de grupo etarios y causas de defuncion
 for ANIO in ('01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12', '13', '14', '15', '16', '17', '18', '19', '20', '21', '22', '23', '24', '25', '26'):
     if os.path.isfile(ruta_input + 'tfm_defweb' + ANIO + '.csv'):
         #Levanto archivo
@@ -32,7 +32,7 @@ for ANIO in ('01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '
         df_causas = pd.merge(dic, df_causas, on='CAUSA', how='inner')
         
 
-        #Se unifica grupo etareo, se descartan los sin especificar -no representan gran cantidad- y se agrupa por edad
+        #Se unifica grupo etario, se descartan los sin especificar -no representan gran cantidad- y se agrupa por edad
         df_grupo = df[['GRUPEDAD', 'CUENTA']]
 
         df_grupo.loc[df_grupo['GRUPEDAD'] == '17_80 y más', 'GRUPEDAD'] = 82

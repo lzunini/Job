@@ -23,10 +23,12 @@ do
     if [[ "$line" == *"pagina_poblacion"* ]]; then
         pagina_poblacion=${line#*=}
     fi
+    if [[ "$line" == *"pagina_descdef"* ]]; then
+        pagina_descdef=${line#*=}
+    fi
 done < /home/lucas/parametros.txt
 
 #Buscar archivos defunciones del 2001 al 2026 si los encuentra hace una bajada
-dirSource="/home/lucas/airflow/archivos/raw"
 fecha=$(date +%Y%m%d%H%M)
 for x in 01 02 03 04 05 06 07 08 09 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26; do
     pagina="${pagina_defweb}${x}.csv"
@@ -51,4 +53,12 @@ resultado=$(curl -X GET -s -I $pagina | head -n 1 | awk '{print $2}')
 echo $pagina
 if [ $resultado == 200 ]; then
     curl -o $dirSource/poblacion.zip $pagina
+fi
+
+#Buscar archivo descripcion campos si lo encuentra hace una bajada
+pagina="${pagina_descdef}"
+resultado=$(curl -s -I $pagina | head -n 1 | awk '{print $2}')
+echo $pagina
+if [ $resultado == 200 ]; then
+    curl -o $dirSource/descdef.xlsx $pagina
 fi

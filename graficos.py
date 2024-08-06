@@ -23,10 +23,10 @@ df_poblacion_tt = pd.read_csv(ruta_output + 'df_poblacion.csv')
 df_dic = pd.read_csv(ruta_output + 'df_dic.csv')
 
 ############################################################
-######### GENERACION DE GRAFICOSS POR GRUPO ETAREO #########
+######### GENERACION DE GRAFICOSS POR GRUPO ETARIO #########
 ############################################################
 
-## GRAFICO DE LINEA CON DATOS ANUALES DE DEFUNCIONES POR GRUPO ETAREO SOBRE DEFUNCIONES EN EL ANIO 
+## GRAFICO DE LINEA CON DATOS ANUALES DE DEFUNCIONES POR GRUPO ETARIO SOBRE DEFUNCIONES EN EL ANIO 
 def anulaes_lineas():
     fig = plt.figure(figsize=(12, 8))
     ax = fig.add_subplot(1, 1, 1)
@@ -43,7 +43,7 @@ def anulaes_lineas():
             GRUPEDAD_line = sns.lineplot(data=df_grupo, x='GRUPEDAD', y='PORC', ax=ax, label=total_anio)
     GRUPEDAD_line.get_figure().savefig(ruta_output + 'EVOLUCION_DEFUNCIONES_GRUPEDAD_DEFUNCIONES_LINE.pdf', format='pdf')
 
-## GRAFICO DE LINEA CON DATOS ANUALES DE DEFUNCIONES POR GRUPO ETAREO SOBRE POBLACION EN EL ANIO 
+## GRAFICO DE LINEA CON DATOS ANUALES DE DEFUNCIONES POR GRUPO ETARIO SOBRE POBLACION EN EL ANIO 
 def total_lineas_poblacion():
     columns_names = df_poblacion_tt.columns.values
     columns_names_list = list(columns_names)
@@ -92,7 +92,7 @@ def total_lineas():
     GRUPEDAD_lin = sns.lineplot(data=GRUPEDAD_line_tt, x='GRUPEDAD', y='PORCTT', ax=ax, label=total_anio)
     GRUPEDAD_lin.get_figure().savefig(ruta_output + 'GRUPEDAD_LINE_DEFUNCIONES_ACUMULADO.pdf', format='pdf')
 
-## GRAFICO DE BARRA CON DATOS ACUMULADOS DE DEFUNCIONES POR GRUPO ETAREO SOBRE DEFUNCIONES ACUMULADAS 
+## GRAFICO DE BARRA CON DATOS ACUMULADOS DE DEFUNCIONES POR GRUPO ETARIO SOBRE DEFUNCIONES ACUMULADAS 
 def total_barra():
     GRUPEDAD_bar = df_grupo_tt.groupby(['GRUPEDAD'])['CUENTA'].sum().reset_index()
     GRUPEDAD_bar['PORCTT'] = GRUPEDAD_bar['CUENTA']/(GRUPEDAD_bar['CUENTA'].sum())*100
@@ -166,18 +166,19 @@ def total_barra_causa():
     for h in range(len(df_causa_descr)):
         valor = str(df_causa_descr.iloc[h]['VALOR'])
         if valor == 'nan':
-            valor = 'Sin especificar'
+            valor = 'Sin especificar**'
         
         texto = texto + str(round(int(df_causa_descr.iloc[h]['PORCTTA']),2)) + '%* ' + str(df_causa_descr.iloc[h]['CAUSA']) + ' ' +  str(valor) + '\n'
-    texto = texto + '\n' +'* suma(CAUSAS todos los años)/suma(defunciones todos los años)'
+    texto = texto + '\n' +'*    Suma(CAUSAS todos los años)/suma(defunciones todos los años)'
+    texto = texto + '\n' +'**   Sgún CIE, U00–U99 son Códigos para propósitos especiales,' 
+    texto = texto + '\n' + 'U00–U49 Asignación provisoria de nuevas afecciones de etiología incierta'
 
     plt.title(titulo)
     plt.xlabel("CAUSA")
     plt.ylabel("PORCENTAJE (defunciones por causa sobre total defunciones)")
-    plt.text(1.1, 0.005, texto, transform = ax.transAxes, bbox=dict(facecolor='none', edgecolor='black', boxstyle='round'), fontsize=10)
+    plt.text(1.1, 0.005, texto, transform = ax.transAxes, bbox=dict(facecolor='none', edgecolor='black', boxstyle='round'), fontsize=11)
     ax.legend(bbox_to_anchor=(1.65, 1.05), borderaxespad=5, fancybox=True, framealpha=1, shadow=False, borderpad=1, edgecolor='black')
 
-    
     CAUSA_barn.get_figure().savefig(ruta_output + 'ACUMULADO_DEFUNCIONES_CAUSAS_DEFUNCIONES_PUNT.pdf', format='pdf')
     
     
