@@ -223,6 +223,8 @@ def total_pont_causa():
 
     CAUSA_punt.get_figure().savefig(ruta_output + 'ACUMULADO_DEFUNCIONES_CAUSAS_DEFUNCIONES_PUNT.pdf', format='pdf')
 
+    plotly_fig.update_xaxes(title_text="CAUSA")
+    plotly_fig.update_yaxes(title_text="PORCENTAJE (defunciones por causa sobre total defunciones)")
     plotly_fig.update_layout(legend_title_text = "Referencias")
     plotly_fig.update_layout(title_text='<br>' +'<br>' +'<br>' +titulo +'<br>' +'<br>' + '<br>' + '<br>' + texto_html, title_x=.15, title_xanchor='left')
     plotly_fig.write_html(ruta_output + "ACUMULADO_DEFUNCIONES_CAUSAS_DEFUNCIONES_PUNT_HTML.html")
