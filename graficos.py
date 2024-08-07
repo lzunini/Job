@@ -3,6 +3,7 @@ import os.path
 import pandas as pd
 import seaborn as sns
 import matplotlib.pyplot as plt
+import plotly.graph_objs as go
 from utilidades.parametros import (ruta_output)
 
 
@@ -30,8 +31,14 @@ df_dic = pd.read_csv(ruta_output + 'df_dic.csv')
 def anulaes_lineas():
     fig = plt.figure(figsize=(12, 8))
     ax = fig.add_subplot(1, 1, 1)
-    plt.title("EVOLUCION DE LAS DEFUNCIONES")
+    plotly_fig = go.Figure()
     titulo = 'EVOLUCION DEFUNCIONES POR EDAD SOBRE DEFUNCIONES 20' + str(df_grupo_tt['ANIO'].min()).zfill(2) + ' a ' + '20' + str(df_grupo_tt['ANIO'].max()).zfill(2)
+    
+    plotly_fig.update_layout(title_text=titulo)
+    plotly_fig.update_layout(legend_title_text = "Referencias")
+    plotly_fig.update_xaxes(title_text="EDADES")
+    plotly_fig.update_yaxes(title_text="PORCENTAJE (defunciones por edad sobre defunciones)")
+
     plt.title(titulo)
     plt.xlabel("EDADES")
     plt.ylabel("PORCENTAJE (defunciones por edad sobre defunciones)")
@@ -41,7 +48,10 @@ def anulaes_lineas():
             df_grupo = df_grupo.sort_values(by=['GRUPEDAD'], ascending=True)
             total_anio = '20'+str(ANIO).zfill(2) + ' DEFUNCIONES: ' + str(df_grupo['CUENTA'].sum())
             GRUPEDAD_line = sns.lineplot(data=df_grupo, x='GRUPEDAD', y='PORC', ax=ax, label=total_anio)
+            plotly_fig.add_trace(go.Scatter(x=df_grupo["GRUPEDAD"], y=df_grupo["PORC"], mode="lines", marker=dict(color=df_grupo["GRUPEDAD"]),  name=total_anio, hovertemplate="Contestant=%s<br>Edades=%%{x}<br>Defunciones por Edad/Defunciones=%%{y}<extra></extra>"% total_anio ))
     GRUPEDAD_line.get_figure().savefig(ruta_output + 'EVOLUCION_DEFUNCIONES_GRUPEDAD_DEFUNCIONES_LINE.pdf', format='pdf')
+    plotly_fig.write_html(ruta_output + "EVOLUCION_DEFUNCIONES_GRUPEDAD_DEFUNCIONES_LINE_HTML.html")
+
 
 ## GRAFICO DE LINEA CON DATOS ANUALES DE DEFUNCIONES POR GRUPO ETARIO SOBRE POBLACION EN EL ANIO 
 def total_lineas_poblacion():
@@ -50,8 +60,15 @@ def total_lineas_poblacion():
 
     fig = plt.figure(figsize=(12, 8))
     ax = fig.add_subplot(1, 1, 1)
-    
     titulo = 'EVOLUCION DEFUNCIONES POR EDAD SOBRE POBLACION 20' + str(df_grupo_tt['ANIO'].min()).zfill(2) + ' a ' + '20' + str(df_grupo_tt['ANIO'].max()).zfill(2)
+
+    plotly_fig = go.Figure()
+
+    plotly_fig.update_layout(title_text=titulo)
+    plotly_fig.update_layout(legend_title_text = "Referencias")
+    plotly_fig.update_xaxes(title_text="EDADES")
+    plotly_fig.update_yaxes(title_text="PORCENTAJE (defunciones por edad sobre poblacion)")
+    
     plt.title(titulo)
     plt.xlabel("EDADES")
     plt.ylabel("PORCENTAJE (defunciones por edad sobre poblacion)")
@@ -73,8 +90,10 @@ def total_lineas_poblacion():
 
                 total_anio = str(string) + ' DEFUNCIONES: ' + str(df_grupo['CUENTA'].sum()) +' POBLACION: ' + str(int(poblacion_tt.iloc[0])) + ' PORCENTAJE: ' + str(porctt) + '%'
                 GRUPEDAD_lin = sns.lineplot(data=GRUPEDAD_line_tt, x='GRUPEDAD', y='PORCTT', ax=ax, label=total_anio)
+                plotly_fig.add_trace(go.Scatter(x=GRUPEDAD_line_tt["GRUPEDAD"],  y=GRUPEDAD_line_tt["PORCTT"], mode="lines", marker=dict(color=GRUPEDAD_line_tt["GRUPEDAD"]), name=total_anio, hovertemplate="Contestant=%s<br>Edades=%%{x}<br>Defunciones/Poblacion=%%{y}<extra></extra>"% total_anio  ))
             
     GRUPEDAD_lin.get_figure().savefig(ruta_output + 'EVOLUCION_DEFUNCIONES_GRUPEDAD_POBLACION_LINE.pdf', format='pdf')
+    plotly_fig.write_html(ruta_output + "EVOLUCION_DEFUNCIONES_GRUPEDAD_POBLACION_LINE_HTML.html")
 
 ## LINEAS TOTAL ANIOS
 def total_lineas():
@@ -99,9 +118,10 @@ def total_barra():
 
     fig = plt.figure(figsize=(12, 8))
     ax = fig.add_subplot(1, 1, 1)
-    
+     
     titulo = 'DEFUNCIONES POR EDAD ACUMULADO SOBRE DEFUNCIONES 20' + str(df_grupo_tt['ANIO'].min()).zfill(2) + ' a ' + '20' + str(df_grupo_tt['ANIO'].max()).zfill(2)
     total_anio = 'DEFUNCIONES 20' + str(df_grupo_tt['ANIO'].min()).zfill(2) + ' a ' + '20' + str(df_grupo_tt['ANIO'].max()).zfill(2) + ': ' + str(df_grupo_tt['CUENTA'].sum())
+    
     plt.title(titulo + '\n' + total_anio)
     plt.xlabel("EDADES")
     plt.ylabel("PORCENTAJE (defunciones por edad sobre total defunciones)")
@@ -112,12 +132,22 @@ def total_barra():
     
     GRUPEDAD_barn.get_figure().savefig(ruta_output + 'ACUMULADO_DEFUNCIONES_GRUPEDAD_DEFUNCIONES_BAR.pdf', format='pdf')
 
+
+    plotly_fig=go.Figure(data=go.Bar(x=GRUPEDAD_bar["GRUPEDAD"], y=GRUPEDAD_bar["PORCTT"],  marker=dict(color=GRUPEDAD_bar["GRUPEDAD"])))
+    plotly_fig.update_layout(title_text=titulo + '\n' + total_anio)
+    plotly_fig.update_xaxes(title_text="EDADES")
+    plotly_fig.update_yaxes(title_text="PORCENTAJE (defunciones por edad sobre total defunciones)")
+    
+    
+    plotly_fig.write_html(ruta_output + "ACUMULADO_DEFUNCIONES_GRUPEDAD_DEFUNCIONES_BAR_HTML.html")
+
+
 ############################################################
 ###### GENERACION DE GRAFICOSS POR CAUSA DE DEFUNCION ######
 ############################################################
 
 ## GRAFICO DE PUNTOS CON DATOS ANUALES DE DEFUNCIONES POR CAUSA (TOP 10) SOBRE DEFUNCIONES ANUALES  
-def total_barra_causa():
+def total_pont_causa():
     CAUSA_bar = df_causas_tt.groupby(['ANIO', 'CAUSA'])['CUENTA'].sum().reset_index()
 
     top_causas = df_causas_tt.groupby(['CAUSA'])['CUENTA'].sum().reset_index()
@@ -128,6 +158,8 @@ def total_barra_causa():
     titulo = 'CAUSAS DE DEFUNCIONES SOBRE DEFUNCIONES ANUALES 20' + str(CAUSA_bar['ANIO'].min()).zfill(2) + ' a ' + '20' + str(CAUSA_bar['ANIO'].max()).zfill(2) + '\n' + '   TOP 10 DE CADA ANIO'
     fig = plt.figure(figsize=(19, 10))
     ax = fig.add_subplot(1, 2, 1)
+    plotly_fig = go.Figure()
+    
     pd.options.mode.chained_assignment = None  # default='warn'
     
     i=0
@@ -151,9 +183,11 @@ def total_barra_causa():
                 df_causa_descr = df_causa_descr._append(df_CAUSA)
             i=i+1
 
-            CAUSA_barn = sns.scatterplot(data=df_CAUSA, x='CAUSA', y='PORCTT', ax=ax, label=total_anio)
+            CAUSA_punt = sns.scatterplot(data=df_CAUSA, x='CAUSA', y='PORCTT', ax=ax, label=total_anio)
             #GRUPEDAD_lin = sns.lineplot(data=GRUPEDAD_line_tt, x='GRUPEDAD', y='PORCTT', ax=ax, label=total_anio)
-            CAUSA_barn.set(xlabel='CAUSA', ylabel='PORCENTAJE (defunciones por edad sobre total defunciones)')
+            CAUSA_punt.set(xlabel='CAUSA', ylabel='PORCENTAJE (defunciones por edad sobre total defunciones)')
+            plotly_fig.add_trace(go.Scatter(x=df_CAUSA["CAUSA"], y=df_CAUSA["PORCTT"],  mode="markers", marker=dict(color=i),  name=total_anio, hovertemplate="Contestant=%s<br>Causa=%%{x}<br>Defunciones por Causa/Defunciones=%%{y}<extra></extra>"% total_anio ))
+            
     
     ## inner join, se agrega descripcion (VALOR) y porcentaje total
     df_causa_descr = pd.merge(df_dic, df_causa_descr, on='CAUSA', how='inner')
@@ -163,27 +197,45 @@ def total_barra_causa():
     df_causa_descr = df_causa_descr.sort_values(by=['PORCTTA'], ascending=False)
     
     texto = ''
+    espacio = '                                                    '
+    texto_html = '                                    Top Acumulado de Todos los años' + '<br>' + espacio
     for h in range(len(df_causa_descr)):
         valor = str(df_causa_descr.iloc[h]['VALOR'])
         if valor == 'nan':
             valor = 'Sin especificar**'
         
-        texto = texto + str(round(int(df_causa_descr.iloc[h]['PORCTTA']),2)) + '%* ' + str(df_causa_descr.iloc[h]['CAUSA']) + ' ' +  str(valor) + '\n'
+        texto =  texto + str(round(int(df_causa_descr.iloc[h]['PORCTTA']),2)) + '%* ' + str(df_causa_descr.iloc[h]['CAUSA']) + ' ' +  str(valor) + '\n'
+        texto_html =  texto_html + str(round(int(df_causa_descr.iloc[h]['PORCTTA']),2)) + '%* ' + str(df_causa_descr.iloc[h]['CAUSA']) + ' ' +  str(valor) + '<br>' + espacio 
     texto = texto + '\n' +'*    Suma(CAUSAS todos los años)/suma(defunciones todos los años)'
     texto = texto + '\n' +'**   Sgún CIE, U00–U99 son Códigos para propósitos especiales,' 
     texto = texto + '\n' + 'U00–U49 Asignación provisoria de nuevas afecciones de etiología incierta'
+    texto_html = texto_html + '<br>' +  '                                    ' + '*    Suma(CAUSAS todos los años)/suma(defunciones todos los años)'
+    texto_html = texto_html + '<br>' +  '                                    ' + '**   Sgún CIE, U00–U99 son Códigos para propósitos especiales,' 
+    texto_html = texto_html + '<br>' +  '                                    ' + 'U00–U49 Asignación provisoria de nuevas afecciones de etiología incierta'
 
+
+    
     plt.title(titulo)
     plt.xlabel("CAUSA")
     plt.ylabel("PORCENTAJE (defunciones por causa sobre total defunciones)")
     plt.text(1.1, 0.005, texto, transform = ax.transAxes, bbox=dict(facecolor='none', edgecolor='black', boxstyle='round'), fontsize=11)
     ax.legend(bbox_to_anchor=(1.65, 1.05), borderaxespad=5, fancybox=True, framealpha=1, shadow=False, borderpad=1, edgecolor='black')
 
-    CAUSA_barn.get_figure().savefig(ruta_output + 'ACUMULADO_DEFUNCIONES_CAUSAS_DEFUNCIONES_PUNT.pdf', format='pdf')
-    
-    
-total_barra_causa()
+    CAUSA_punt.get_figure().savefig(ruta_output + 'ACUMULADO_DEFUNCIONES_CAUSAS_DEFUNCIONES_PUNT.pdf', format='pdf')
+
+    plotly_fig.update_layout(legend_title_text = "Referencias")
+    plotly_fig.update_layout(title_text='<br>' +'<br>' +'<br>' +titulo +'<br>' +'<br>' + '<br>' + '<br>' + texto_html, title_x=.15, title_xanchor='left')
+    plotly_fig.write_html(ruta_output + "ACUMULADO_DEFUNCIONES_CAUSAS_DEFUNCIONES_PUNT_HTML.html")
+#title = {
+#         'text': "Plot Title",
+#         'y':0.9, # new
+#         'x':0.5,
+#         'xanchor': 'center',
+#         'yanchor': 'top' # new
+#        }
+total_pont_causa()
 anulaes_lineas()
 #total_lineas()
 total_barra()
 total_lineas_poblacion()
+
