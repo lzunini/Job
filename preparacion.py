@@ -85,6 +85,8 @@ df_grupo_tt['PORCTT'] = df_grupo_tt['CUENTA']/(df_causas_tt['CUENTA'].sum())*100
 ## guardo en directorio output dataset para analisis
 
 df_grupo_tt.to_csv(ruta_output + 'df_grupo_tt.csv', index=False)
+
+
 df_causas_tt.to_csv(ruta_output + 'df_causas_tt.csv', index=False)
 
 ## proceso archivo naciemitos y guardado en directorio output dataset para analisis
