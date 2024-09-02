@@ -267,12 +267,14 @@ def variacion_causa(desde):
 
     if desde>4:
         variacion_causas_final = variacion_causas_final[variacion_causas_final['INDICAVARIACION'] > 0]
+        titulo = 'EVOLUCION DEFUNCIONES POR CAUSA CON MAYOR VARIABILIDAD ULTIMOS ANIOS' 
     else:
         variacion_causas_final = variacion_causas_final[variacion_causas_final['INDICAVARIACION'] > 2]
+        titulo = 'EVOLUCION DEFUNCIONES POR CAUSA CON MAYOR VARIABILIDAD' 
 
  
     plotly_fig = go.Figure()
-    titulo = 'EVOLUCION DEFUNCIONES POR CAUSA CON MAYOR VARIABILIDAD' 
+    
     
     plotly_fig.update_layout(title_text=titulo)
     plotly_fig.update_layout(legend_title_text = "Referencias")
@@ -296,39 +298,17 @@ def variacion_causa(desde):
     plotly_fig.write_html(ruta_output + 'EVOLUCION_DEFUNCIONES_PORC_LINE_HTML_' + str(desde)+ '.html')  
 
 ## 
-def variacion_edad(desde):
-    df_grupo_tt_tmp = df_grupo_tt.query('ANIO > @desde')
+def variacion_edad():
 
-    variacion_grupo_tmp = df_grupo_tt_tmp.groupby(['GRUPEDAD'])['PORC'].sum().reset_index()
-    variacion_grupo_tmp['PORCPROM'] = variacion_grupo_tmp['PORC']/(17 - (desde - 5))
-
-
-    variacion_grupo = variacion_grupo_tmp[['GRUPEDAD','PORCPROM']]
-
-    variacion_grupo = pd.merge(variacion_grupo, df_grupo_tt_tmp, on='GRUPEDAD', how='inner')
-
-    variacion_grupo['INDICADOR'] = abs(variacion_grupo['PORC']-variacion_grupo['PORCPROM'])
-
-
-    variacion_grupo_final_1 = variacion_grupo.groupby(['GRUPEDAD'])['INDICADOR'].sum().reset_index()
-    variacion_grupo_final_2 = variacion_grupo.groupby(['GRUPEDAD'])['PORCPROM'].max().reset_index()
-        
-    variacion_grupo_final = pd.merge(variacion_grupo_final_1, variacion_grupo_final_2, on='GRUPEDAD', how='inner')
-
-    variacion_grupo_final['INDICAVARIACION'] = variacion_grupo_final['INDICADOR']/variacion_grupo_final['PORCPROM']
-
-
-    #variacion_grupo_final.to_csv('/home/lucas/airflow/archivos/output/variacion_grupo_final' + str(desde) + '.csv', index=False)
-
-
+    variacion_grupo_final = df_grupo_tt.groupby(['GRUPEDAD'])['PORC'].sum().reset_index()
  
     plotly_fig = go.Figure()
-    titulo = 'EVOLUCION DEFUNCIONES POR GRUPEDAD CON MAYOR VARIABILIDAD' 
+    titulo = 'EVOLUCION DEFUNCIONES POR EDAD' 
     
     plotly_fig.update_layout(title_text=titulo)
     plotly_fig.update_layout(legend_title_text = "Referencias")
     plotly_fig.update_xaxes(title_text="ANIO")
-    plotly_fig.update_yaxes(title_text="PORCENTAJE (defunciones por GRUPEDAD sobre defunciones)")
+    plotly_fig.update_yaxes(title_text="PORCENTAJE (defunciones por GRUPO EDAD sobre defunciones)")
 
    
     for h in range(len(variacion_grupo_final)):
@@ -346,14 +326,13 @@ def variacion_edad(desde):
             plotly_fig.add_trace(go.Scatter(x=df_grupo["ANIO"],  y=df_grupo["PORC"],  customdata=df_grupo["CUENTA"], mode="lines", marker=dict(color=df_grupo["ANIO"]), name=total_anio, hovertemplate="GRUPEDAD=%s<br>Cantidad=%%{customdata}<br>Año=%%{x}<br>Porcentaje (Defunciones por GRUPEDAD/defunciones)=%%{y}<extra></extra>"% total_anio ))
             
     
-    plotly_fig.write_html(ruta_output + 'EVOLUCION_DEFUNCIONES_PORC_EDAD_LINE_HTML_' + str(desde)+ '.html')  
+    plotly_fig.write_html(ruta_output + 'EVOLUCION_DEFUNCIONES_PORC_EDAD_LINE_HTML.html')  
 
 
 
 variacion_causa(4)
 variacion_causa(18)
-variacion_edad(4)
-variacion_edad(18)
+variacion_edad()
 total_pont_causa()
 anulaes_lineas()
 #total_lineas()
